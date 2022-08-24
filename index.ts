@@ -22,7 +22,7 @@ bot.on("text", async (ctx) => {
   const searchResult = await search(text, 10);
   const searchResultButtons = generateSearchResultButtons(searchResult);
 
-  ctx.reply(searchResult.length ? text : "Нічого не знайдено", {
+  ctx.reply(searchResult.length ? "Результат:" : "Нічого не знайдено", {
     reply_markup: {
       inline_keyboard: searchResultButtons,
     },
