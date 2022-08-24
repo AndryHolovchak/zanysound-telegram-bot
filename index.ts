@@ -1,3 +1,4 @@
+import { generateFullTrackName } from "./utils/commonUtils";
 import { generateSearchResultButtons } from "./utils/telegramUtils";
 import { getTrackInfo, search } from "./deezer";
 import { Telegraf } from "telegraf";
@@ -21,7 +22,11 @@ bot.on("text", async (ctx) => {
   const searchResult = await search(text, 10);
   const searchResultButtons = generateSearchResultButtons(searchResult);
 
-  ctx.reply(searchResult.length ? text : "Нічого не знайдено", searchResultButtons);
+  ctx.reply(searchResult.length ? text : "Нічого не знайдено", {
+    reply_markup: {
+      inline_keyboard: searchResultButtons,
+    },
+  });
 });
 
 bot.on("callback_query", async (ctx) => {
@@ -33,14 +38,16 @@ bot.on("callback_query", async (ctx) => {
     }
 
     const trackInfo = await getTrackInfo(trackId);
-    const trackMp3 = await getMp3(trackInfo.title, trackInfo.artist);
+    const trackMp3 = await getMp3(trackInfo);
 
     ctx.replyWithAudio(
       {
         source: trackMp3.stream,
-        filename: `${trackInfo.artist} - ${trackInfo.title}`,
+        filename: generateFullTrackName(trackInfo),
       },
       {
+        title: trackInfo.title,
+        performer: trackInfo.artist,
         duration: trackMp3.duration,
         thumb: {
           url: trackInfo.cover,

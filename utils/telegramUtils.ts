@@ -1,13 +1,8 @@
+import { generateFullTrackName } from "./commonUtils";
 import { Markup } from "telegraf";
-import { InlineKeyboardMarkup } from "telegraf/typings/core/types/typegram";
+import { InlineKeyboardButton } from "telegraf/typings/core/types/typegram";
 import { SearchResult } from "../types";
 
-export const generateSearchResultButtons = (
-  data: SearchResult
-): Markup.Markup<InlineKeyboardMarkup> => {
-  const keyboardData = data.map((item) => [
-    Markup.button.callback(`${item.artist} - ${item.title}`, item.id),
-  ]);
-
-  return Markup.inlineKeyboard(keyboardData);
+export const generateSearchResultButtons = (data: SearchResult): InlineKeyboardButton[][] => {
+  return data.map((item) => [Markup.button.callback(generateFullTrackName(item), item.id)]);
 };

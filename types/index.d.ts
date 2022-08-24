@@ -1,15 +1,16 @@
 import { Readable } from "stream";
 
-export interface SearchResultItem {
-  id: string;
+export interface BasicTrackInfo {
   title: string;
   artist: string;
 }
 
-export interface TrackInfo {
+export interface SearchResultItem extends BasicTrackInfo {
+  id: string;
+}
+
+export interface TrackInfo extends BasicTrackInfo {
   cover: string;
-  title: string;
-  artist: string;
 }
 
 export interface TrackMp3 {

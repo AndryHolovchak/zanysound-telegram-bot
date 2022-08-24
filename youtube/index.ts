@@ -1,10 +1,11 @@
+import { generateFullTrackName } from "./../utils/commonUtils";
 import axios from "axios";
-import { TrackMp3 } from "./../types/index.d";
+import { BasicTrackInfo, TrackMp3 } from "./../types/index.d";
 import ytdl, { getInfo } from "ytdl-core";
 import { getFirstVideoIdFromSearchResult } from "./../utils/youtubeUtils";
 
-export const getMp3 = async (title: string, artist: string): Promise<TrackMp3> => {
-  const encodedSearchQuery = encodeURIComponent(`${artist} - ${title} audio`);
+export const getMp3 = async (track: BasicTrackInfo): Promise<TrackMp3> => {
+  const encodedSearchQuery = encodeURIComponent(`${generateFullTrackName(track)} audio`);
 
   const searchResult = await axios.get(
     `https://www.youtube.com/results?search_query=${encodedSearchQuery}`

@@ -1,6 +1,6 @@
-import { parseSearchResponse, parseTrackInfoResponse } from "./../utils/deezerUtils";
-import { SearchResult, TrackInfo } from "../types";
 import axios from "axios";
+import { SearchResult, TrackInfo } from "../types";
+import { parseSearchResponse, parseTrackInfoResponse } from "./../utils/deezerUtils";
 
 export const search = async (query: string, count: number): Promise<SearchResult> => {
   const response = await searchApiCall(query);
@@ -19,7 +19,6 @@ const getTrackInfoApiCall = async (id: string) => {
 
 const searchApiCall = async (query: string): Promise<any> => {
   const encodedQuery = encodeURIComponent(query);
-
   const response = await axios.get(`https://api.deezer.com/search/track?q=${encodedQuery}`);
   return response.data.data;
 };
