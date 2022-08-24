@@ -4,7 +4,18 @@ import { parseSearchResponse, parseTrackInfoResponse } from "./../utils/deezerUt
 
 export const search = async (query: string, count: number): Promise<SearchResult> => {
   const response = await searchApiCall(query);
-  return parseSearchResponse(response).slice(0, count);
+
+  // remove tracks with the same artist + title
+  return parseSearchResponse(response)
+    .filter((e, index, array) => {
+      for (let i = index + 1; i < array.length; i++) {
+        if (e.artist === array[i].artist && e.title === array[i].title) {
+          return false;
+        }
+      }
+      return true;
+    })
+    .slice(0, count);
 };
 
 export const getTrackInfo = async (id: string): Promise<TrackInfo> => {
