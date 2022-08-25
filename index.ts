@@ -11,8 +11,8 @@ const expressApp = express();
 expressApp.get("/", (req: any, res: any) => {
   res.send("Hello World!");
 });
-expressApp.listen(3000, () => {
-  console.log(`Listening on port 3000`);
+expressApp.listen(process.env.PORT || 3000, () => {
+  console.log(`Listening on port ${process.env.PORT || 3000}`);
 });
 
 const bot = new Telegraf("5444904919:AAEYs6gp47Fz34rftcIW3QMBOGzsygPYzkQ");
