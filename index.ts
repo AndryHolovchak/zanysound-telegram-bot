@@ -41,7 +41,7 @@ bot.on("callback_query", async (ctx) => {
   ctx.replyWithAudio(
     {
       source: trackMp3.stream,
-      filename: generateFullTrackName(trackInfo),
+      filename: generateFullTrackName(trackInfo) + ".mp3",
     },
     {
       title: trackInfo.title,
