@@ -1,27 +1,56 @@
-import { generateFullTrackName } from "./../utils/commonUtils";
 import axios from "axios";
-import { BasicTrackInfo, TrackMp3 } from "./../types/index.d";
-import ytdl, { getInfo } from "ytdl-core";
-import { getFirstVideoIdFromSearchResult } from "./../utils/youtubeUtils";
+import ytdl from "ytdl-core";
+import { durationToSec } from "../utils/timeUtils";
+import { generateFullTrackName } from "./../utils/commonUtils";
+import { Track, TrackMp3, YoutubeVideoInfo } from "./../types/index.d";
 
-export const getMp3 = async (track: BasicTrackInfo): Promise<TrackMp3> => {
-  const encodedSearchQuery = encodeURIComponent(`${generateFullTrackName(track)} audio`);
+export const getMp3 = async (track: Track): Promise<TrackMp3> => {
+  const searchResult = await getYoutubeSearchResult(`${generateFullTrackName(track)} audio`);
+  const firstVideo = getFirstVideoFromSearchResult(searchResult.data);
 
-  const searchResult = await axios.get(
-    `https://www.youtube.com/results?search_query=${encodedSearchQuery}`
-  );
-
-  const firstVideoId = getFirstVideoIdFromSearchResult(searchResult.data);
-
-  if (!firstVideoId) {
+  if (!firstVideo) {
     throw new Error("Video not found");
   }
 
-  const info = await getInfo(`http://www.youtube.com/watch?v=${firstVideoId}`);
-  const durationMS = info.formats.filter((format) => format.itag === 140)[0].approxDurationMs;
+  const stream = ytdl(`http://www.youtube.com/watch?v=${firstVideo.id}`, {
+    filter: formatsFilter,
+  });
 
   return {
-    stream: ytdl(`http://www.youtube.com/watch?v=${firstVideoId}`),
-    duration: durationMS ? +durationMS / 1000 : 0,
+    stream,
+    duration: firstVideo.duration,
   };
 };
+
+const getYoutubeSearchResult = async (query: string): Promise<any> => {
+  const encodedSearchQuery = encodeURIComponent(query);
+  return axios.get(`https://www.youtube.com/results?search_query=${encodedSearchQuery}`);
+};
+
+const getFirstVideoFromSearchResult = (html: string): YoutubeVideoInfo | null => {
+  const matchedResponseContext = html.match(/\{\"responseContext\"\:\{.*\;\<\//gm);
+
+  if (!matchedResponseContext) {
+    return null;
+  }
+
+  const responseContext = matchedResponseContext[0].slice(
+    0,
+    matchedResponseContext[0].length - 3
+  );
+
+  const data = JSON.parse(responseContext);
+  const renderInfo =
+    data.contents.twoColumnSearchResultsRenderer.primaryContents.sectionListRenderer
+      .contents[0].itemSectionRenderer.contents[0].videoRenderer;
+
+  const id = renderInfo.videoId;
+  const durationText = renderInfo.lengthText.simpleText;
+
+  return {
+    id,
+    duration: durationToSec(durationText),
+  };
+};
+
+const formatsFilter = (format: any) => format.itag === 140;

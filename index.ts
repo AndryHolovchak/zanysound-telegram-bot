@@ -3,6 +3,7 @@ import { generateSearchResultButtons } from "./utils/telegramUtils";
 import { getTrackInfo, search } from "./deezer";
 import { Telegraf } from "telegraf";
 import { getMp3 } from "./youtube";
+import { Track } from "./types";
 
 const bot = new Telegraf("5444904919:AAEYs6gp47Fz34rftcIW3QMBOGzsygPYzkQ");
 
@@ -30,34 +31,27 @@ bot.on("text", async (ctx) => {
 });
 
 bot.on("callback_query", async (ctx) => {
-  const trackId = ctx.callbackQuery.data;
-
-  try {
-    if (!trackId) {
-      throw new Error("There is no track data");
-    }
-
-    const trackInfo = await getTrackInfo(trackId);
-    const trackMp3 = await getMp3(trackInfo);
-
-    ctx.replyWithAudio(
-      {
-        source: trackMp3.stream,
-        filename: generateFullTrackName(trackInfo),
-      },
-      {
-        title: trackInfo.title,
-        performer: trackInfo.artist,
-        duration: trackMp3.duration,
-        thumb: {
-          url: trackInfo.cover,
-        },
-      }
-    );
-  } catch (e) {
-    console.log(e);
-    ctx.reply("Щось пішло не так :(");
+  if (!ctx.callbackQuery.data) {
+    throw new Error("There is no track data");
   }
+
+  const trackInfo = await getTrackInfo(ctx.callbackQuery.data);
+  const trackMp3 = await getMp3(trackInfo);
+
+  ctx.replyWithAudio(
+    {
+      source: trackMp3.stream,
+      filename: generateFullTrackName(trackInfo),
+    },
+    {
+      title: trackInfo.title,
+      performer: trackInfo.artist,
+      duration: trackMp3.duration,
+      thumb: {
+        url: trackInfo.cover,
+      },
+    }
+  );
 });
 
 bot.launch();

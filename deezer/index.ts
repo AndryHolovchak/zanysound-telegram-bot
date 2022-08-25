@@ -1,6 +1,6 @@
 import axios from "axios";
-import { SearchResult, TrackInfo } from "../types";
-import { parseSearchResponse, parseTrackInfoResponse } from "./../utils/deezerUtils";
+import { SearchResult, Track } from "../types";
+import { parseSearchResponse, parseTrackInfo } from "./../utils/deezerUtils";
 
 export const search = async (query: string, count: number): Promise<SearchResult> => {
   const response = await searchApiCall(query);
@@ -18,9 +18,9 @@ export const search = async (query: string, count: number): Promise<SearchResult
     .slice(0, count);
 };
 
-export const getTrackInfo = async (id: string): Promise<TrackInfo> => {
+export const getTrackInfo = async (id: string): Promise<Track> => {
   const response = await getTrackInfoApiCall(id);
-  return parseTrackInfoResponse(response);
+  return parseTrackInfo(response);
 };
 
 const getTrackInfoApiCall = async (id: string) => {

@@ -5,12 +5,12 @@ export interface BasicTrackInfo {
   artist: string;
 }
 
-export interface SearchResultItem extends BasicTrackInfo {
-  id: string;
+export interface Track extends BasicTrackInfo {
+  cover: string;
 }
 
-export interface TrackInfo extends BasicTrackInfo {
-  cover: string;
+export interface SearchResultTrack extends BasicTrackInfo {
+  id: string;
 }
 
 export interface TrackMp3 {
@@ -18,4 +18,9 @@ export interface TrackMp3 {
   duration: number;
 }
 
-export type SearchResult = SearchResultItem[];
+export interface YoutubeVideoInfo {
+  id: string;
+  duration: number;
+}
+
+export type SearchResult = SearchResultTrack[];

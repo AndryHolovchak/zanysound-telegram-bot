@@ -1,4 +1,4 @@
-import { BasicTrackInfo } from "./../types/index.d";
+import { BasicTrackInfo } from "../types";
 
 export const generateFullTrackName = (track: BasicTrackInfo): string => {
   return `${track.artist} - ${track.title}`;
