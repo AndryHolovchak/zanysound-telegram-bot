@@ -3,7 +3,18 @@ import { generateSearchResultButtons } from "./utils/telegramUtils";
 import { getTrackInfo, search } from "./deezer";
 import { Telegraf } from "telegraf";
 import { getMp3 } from "./youtube";
-import { Track } from "./types";
+import express from "express";
+
+// express is needed for Heroku app
+const expressApp = express();
+
+const port = process.env.PORT || 3000;
+expressApp.get("/", (req: any, res: any) => {
+  res.send("Hello World!");
+});
+expressApp.listen(port, () => {
+  console.log(`Listening on port ${port}`);
+});
 
 const bot = new Telegraf("5444904919:AAEYs6gp47Fz34rftcIW3QMBOGzsygPYzkQ");
 
