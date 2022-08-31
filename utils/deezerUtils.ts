@@ -10,5 +10,5 @@ export const parseSearchResponse = (data: any): SearchResult =>
 export const parseTrackInfo = (data: any): Track => ({
   title: data.title,
   artist: data.artist.name,
-  cover: data.album.cover_big,
+  cover: data.album.cover_xl,
 });
